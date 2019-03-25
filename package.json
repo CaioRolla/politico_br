@@ -16,6 +16,7 @@
   "author": "@caio_rolla",
   "license": "ISC",
   "dependencies": {
+    "foswig": "^1.1.1",
     "twitter": "^1.7.1"
   }
 }
