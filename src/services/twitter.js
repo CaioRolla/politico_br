@@ -3,8 +3,16 @@ const { twitterConfig } = require('../config/config');
 
 const client = new Twitter(twitterConfig);
 
-const getFriendsIds = (params = {}) => {
-  return client.get('friends/ids', params);
+const getFriends = (params = {}) => {
+  return client.get('friends/list', params);
 };
 
-module.exports = { getFriendsIds };
+const getTweetsFromScreenNames = screenNames => {
+  const screenNamesText = screenNames.join(', OR from:');
+  return client.get('search/tweets', {
+    q: `from:${screenNamesText}`,
+    count: 100
+  });
+};
+
+module.exports = { getFriends, getTweetsFromScreenNames };
