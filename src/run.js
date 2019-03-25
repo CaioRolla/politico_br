@@ -1,21 +1,23 @@
 const TwitterService = require('./services/twitter');
 const Markov = require('markov-strings').default;
 
-(async () => {
+(async function run(stateSize) {
   try {
+    // Get every "following". Let's call it "friends".
     const friendsResponse = await TwitterService.getFriends();
 
-    const friendsScreenNames = friendsResponse.users.map(friend => {
-      return friend.screen_name;
-    });
+    // Extract the friends screen names (@name)
+    const friendsScreenNames = friendsResponse.users.map(
+      friend => friend.screen_name
+    );
 
+    // Based on those screen names, search for tweets
     const tweetsResponse = await TwitterService.getTweetsFromScreenNames(
       friendsScreenNames
     );
 
-    const tweetsText = tweetsResponse.statuses.map(tweet => {
-      return tweet.text;
-    });
+    // Extract only the tweets text from the response.
+    const tweetsText = tweetsResponse.statuses.map(tweet => tweet.text);
 
     const cleanedTweets = tweetsText.map(tweet => {
       return tweet
@@ -26,26 +28,23 @@ const Markov = require('markov-strings').default;
         );
     });
 
-    const filteredTweets = cleanedTweets.filter(tweet => {
-      return tweet.length >= 100;
-    });
-
-    console.log(filteredTweets);
+    const filteredTweets = cleanedTweets.filter(tweet => tweet.length >= 100);
 
     const options = {
-      maxTries: 2000,
+      maxTries: 99999,
       filter: result => {
-        return (
-          result.string.split(' ').length >= 5 && result.string.endsWith('.')
-        );
+        return result.string.split(' ').length >= 3;
       }
     };
 
-    const markov = new Markov(filteredTweets, { stateSize: 1 });
+    const markov = new Markov(filteredTweets, { stateSize });
     markov.buildCorpus();
     const result = markov.generate(options);
     console.log(result.string);
   } catch (error) {
+    if (stateSize < 5) {
+      run(stateSize + 1);
+    }
     console.log(error);
   }
-})();
+})(1);
