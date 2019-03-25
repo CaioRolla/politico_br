@@ -1,5 +1,5 @@
-const TwitterService = require('./services/twitter');
-const Markov = require('markov-strings').default;
+const TwitterService = require("./services/twitter");
+const Markov = require("markov-strings").default;
 
 (async function run(stateSize = 3) {
   try {
@@ -20,36 +20,38 @@ const Markov = require('markov-strings').default;
     const tweetsText = tweetsResponse.statuses.map(tweet => tweet.text);
 
     const cleanedTweets = tweetsText.map(tweet => {
-      return tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+      return tweet.replace(/(?:https?|ftp):\/\/[\n\S]+/g, "");
       /*.replace(
           /([\uE000-\uF8FF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF])/g,
           ''
         );*/
     });
 
-    const filteredTweets = cleanedTweets.filter(tweet => tweet.length >= 50);
+    const filteredTweets = cleanedTweets.filter(tweet => tweet.length >= 100);
 
     const options = {
       maxTries: 99999,
       filter: result => {
         return (
-          result.string.split(' ').length >= 3 &&
-          result.string.split(' ').length < 250 &&
-          !result.string.endsWith('…')  
+          result.string.split(" ").length >= 3 &&
+          result.string.split(" ").length < 200 &&
+          !result.string.endsWith("…")
         );
       }
     };
 
-    const markov = new Markov(filteredTweets, { stateSize });
+    const markov = new Markov(filteredTweets, { stateSize: stateSize });
+
     markov.buildCorpus();
     const result = markov.generate(options);
-    console.log(result.tries, result.string.length, result.string);
+
+    console.log("tries: ", result.tries);
+    console.log("score: ", result.score);
+    console.log(result.string);
   } catch (error) {
-    if (stateSize - 1 > 0) {
-      run(stateSize - 1);
+    if (stateSize + 1 < 4) {
+      run(stateSize + 1);
     }
     console.log(error);
   }
-})(3);
-
-
+})(1);
