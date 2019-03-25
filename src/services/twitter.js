@@ -11,7 +11,7 @@ const getTweetsFromScreenNames = screenNames => {
   const screenNamesText = screenNames.join(', OR from:');
   return client.get('search/tweets', {
     q: `from:${screenNamesText}`,
-    count: 100
+    count: 10
   });
 };
 
