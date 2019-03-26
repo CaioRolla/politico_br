@@ -1,9 +1,15 @@
 const TwitterService = require('./services/twitter');
 const Markov = require('markov-strings').default;
 
+console.log("Worker starting...");
+
+setInterval(() => {
+  console.log("Worker still running.");
+}, 1000);
+
 setInterval(() => {
   run(1);
-}, 1000 * 60 * 60);
+}, 1000 * 60 * 30);
 
 async function run(stateSize = 3) {
   try {
