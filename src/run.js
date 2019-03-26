@@ -33,9 +33,9 @@ const Markov = require("markov-strings").default;
       maxTries: 99999,
       filter: result => {
         return (
-          result.string.split(" ").length >= 3 &&
-          result.string.split(" ").length < 200 &&
-          !result.string.endsWith("…")
+          result.string.trim().split(" ").length >= 3 &&
+          result.string.trim().split(" ").length < 200 &&
+          !result.string.trim().endsWith("…")
         );
       }
     };
@@ -48,6 +48,10 @@ const Markov = require("markov-strings").default;
     console.log("tries: ", result.tries);
     console.log("score: ", result.score);
     console.log(result.string);
+    console.log(result.refs);
+
+    await TwitterService.postTweet(result.string);
+
   } catch (error) {
     if (stateSize + 1 < 4) {
       run(stateSize + 1);

@@ -9,10 +9,15 @@ const getFriends = (params = {}) => {
 
 const getTweetsFromScreenNames = screenNames => {
   const screenNamesText = screenNames.join(', OR from:');
+  //let results = [];
   return client.get('search/tweets', {
     q: `from:${screenNamesText}`,
     count: 100
   });
 };
 
-module.exports = { getFriends, getTweetsFromScreenNames };
+const postTweet = (tweet) => {
+  return client.post('statuses/update', {status: tweet});
+}
+
+module.exports = { getFriends, getTweetsFromScreenNames, postTweet };
