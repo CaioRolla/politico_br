@@ -5,11 +5,11 @@ console.log("Worker starting...");
 
 setInterval(() => {
   console.log("Worker still running.");
-}, 1000);
+}, 10000);
 
 setInterval(() => {
   run(1);
-}, 1000 * 60 * 30);
+}, 1000 * 60 * 60);
 
 async function run(stateSize = 3) {
   try {
@@ -45,7 +45,8 @@ async function run(stateSize = 3) {
         return (
           result.string.trim().split(' ').length >= 3 &&
           result.string.trim().split(' ').length < 200 &&
-          !result.string.trim().endsWith('…')
+          !result.string.trim().endsWith('…') && 
+          !result.string.trim().endsWith('mais!')
         );
       }
     };
